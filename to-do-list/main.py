@@ -29,6 +29,25 @@ def mainpage():
     return render_template('index.html', pets = dat, order="desc" if order=="asc" else "asc")
 
 
+@bp.route("/<pid>")
+def pet_info(pid): 
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("select p.name, p.bought, p.sold, p.description, s.name from pet p, animal s where p.species = s.id and p.id = ?", [pid])
+    pet = cursor.fetchone()
+    cursor.execute("select t.name from tags_pets tp, tag t where tp.pet = ? and tp.tag = t.id", [pid])
+    tags = (x[0] for x in cursor.fetchall())
+    name, bought, sold, description, species = pet
+    data = dict(id = pid,
+                name = name,
+                bought = format_date(bought),
+                sold = format_date(sold),
+                description = description, #TODO Not being displayed
+                species = species,
+                tags = tags)
+    return render_template("petdetail.html", **data)
+
+    
 
 
 

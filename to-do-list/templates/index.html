@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+          <h4 class="display-4">TASKS TO DO</h4>
+          <p>
+            <table class="table table-striped">
+              <thead class="thead-dark">
+              <tr>
+                <th scope="col"> <a href="/?order_by=id&order={{order}}">S.No</a> </th>
+                <th scope="col"> <a href="/?order_by=task&order={{order}}">Task</a>  </th>
+                <th scope="col"> <a href="/?order_by=created_on&order={{order}}">Created On</a>  </th>
+                <th scope="col"> <a href="/?order_by=due&order={{order}}">Due</a> </th>
+                <th scope="col"> <a href="/?order_by=status&order={{order}}">Status</a> </th>
+              </tr>
+              </thead>
+              {% for id, task, created_on, due in pets %}
+              <tr>              
+                <td scope="row" class="petid" ><a href="{{url_for('pets.pet_info', pid=id)}}">{{id}}</a></td>
+                <td class="petname">{{task}} </td>
+                <td class="petbought">{{created_on}}</td>
+                <td class="petsold">{{due}}</td>
+              </tr>
+              {%endfor%}
+            </table>
+          </p>
+{% endblock %}
