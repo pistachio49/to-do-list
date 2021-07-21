@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+<h1 class="display-1">Task details</h1>
+<p>
+  <h6 class="display-6">
+    <u class="name">{{task}}</u>
+  </h6>
+</p>
+
+  <p class="description"> 
+    {{description}}
+  </p>
+
+<p>
+  <a class="btn btn-primary" href="{{url_for('main.addtask')}}">Edit</a>
+</p>
+
+{% endblock %}
