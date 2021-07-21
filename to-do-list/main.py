@@ -28,7 +28,6 @@ def mainpage():
     dat = cursor.fetchall()
     return render_template('index.html', pets = dat, order="desc" if order=="asc" else "asc")
 
-
 @bp.route("/<pid>")
 def task_info(pid): 
     conn = db.get_db()
@@ -65,6 +64,10 @@ def addtask():
         description = request.form.get("description")
         due = request.form.get("due")
         status=request.form.get("status")
+
+        if not task or not due or not status:
+            return redirect(url_for("main.mainpage"), 302)
+
         cursor.execute("insert into content(task,created_on,due,status,description) values(?,?,?,?,?) ", (task,datetime.datetime.today().strftime("%Y-%m-%d %H:%M"), due,status,description))
         #conn.commit()
 
@@ -74,6 +77,39 @@ def addtask():
         # TODO Handle sold
         return redirect(url_for("main.mainpage"), 302)
         
+@bp.route("/<pid>/edit", methods=["GET", "POST"])
+def edit(pid):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    if request.method == "GET":
+        cursor.execute("select p.task, p.created_on, p.due,p.description from content p where p.id = ?", [pid])
+        pet = cursor.fetchone()
+        #cursor.execute("select t.name from tags_pets tp, tag t where tp.pet = ? and tp.tag = t.id", [pid])
+        #tags = (x[0] for x in cursor.fetchall())
+        task, created_on, due, description= pet
+        data = dict(id = pid,
+                    task=task,
+                    created_on=created_on,
+                    due=due,
+                    description=description
+                    )
+        return render_template("edittask.html", **data)
+    elif request.method == "POST":
+        task = request.form.get("task")
+        description = request.form.get("description")
+        due = request.form.get("due")
+        status=request.form.get("status")
 
+        if not task or not due or not status:
+            return redirect(url_for("main.mainpage"), 302)
+
+        cursor.execute("update content set task=?,description = ?,due=?,status=? where id = ?", (task,description,due,status,pid))
+        #conn.commit()
+
+        #if sold=="sold":
+       # cursor.execute("update pet set sold = ? where id = ?", (datetime.datetime.today().strftime("%Y-%m-%d"), pid))
+        conn.commit()
+        # TODO Handle sold
+        return redirect(url_for("main.mainpage", pid=pid), 302)
 
 

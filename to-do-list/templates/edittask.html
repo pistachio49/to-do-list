@@ -2,7 +2,7 @@
 {% block body %}
 <h1 class="display-1">add Task </h1>
 <p>
-<form action="{{url_for('main.addtask', pid=id)}}" method="POST">
+<form action="{{url_for('main.edit', pid=id)}}" method="POST">
   <div class="mb-3">
     <label for = "task" class="form-label">Task</label><br/>
     <textarea rows="1" id="task" class="form-control"

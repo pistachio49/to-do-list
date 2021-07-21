@@ -1,18 +1,30 @@
 {% extends "base.html" %}
 {% block body %}
 <h1 class="display-1">Task details</h1>
+
 <p>
   <h6 class="display-6">
-    <u class="name">{{task}}</u>
+    {{task}}
   </h6>
 </p>
+<p>
+    created on:<u class="name">{{created_on}}</u>
+  
+</p>
+
+<p>
+    Due:<u class="name">{{due}}</u>
+  
+</p>
+
+
 
   <p class="description"> 
     {{description}}
   </p>
 
 <p>
-  <a class="btn btn-primary" href="{{url_for('main.addtask')}}">Edit</a>
+  <a class="btn btn-primary" href="{{url_for('main.edit', pid=id)}}">Edit</a>
 </p>
 
 {% endblock %}
