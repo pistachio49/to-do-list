@@ -1,15 +1,22 @@
 {% extends "base.html" %}
 {% block body %}
-<h1 class="display-1">add Task </h1>
+<h2 class="display-3">ADD TASK</h1>
 <p>
 <form action="{{url_for('main.addtask', pid=id)}}" method="POST">
+  <fieldset>
   <div class="mb-3">
-    <label for = "task" class="form-label">Task</label><br/>
-    <textarea rows="1" id="task" class="form-control"
-              name="task">
+      <label for="task" class="form-label">Task:</label><br>
+      <input type="text" id="task" name="task" ><br>
       {{task}}
-    </textarea>
+    
   </div>
+  <br>
+
+  <div class="mb-3">
+    <label for="due">Due:</label><br>
+    <input type="datetime-local" id="due" name="due">
+  </div>
+<br>
 
   <div class="mb-3">
     <label for = "description" class="form-label">Description</label><br/>
@@ -19,17 +26,14 @@
     </textarea>
   </div>
 
-  <div class="mb-3">
-    <label for="due">Scheduled (date and time):</label>
-    <input type="datetime-local" id="due" name="due">
-  </div>
+<br>
 
   <div class="mb-3">
     <label for = "status" class="form-label">status</label><br/>
     <input list="options"  id="status" class="form-control"
               name="status">
               <datalist id="options">
-                <option value="to-do">
+                <option value="To-do">
                 <option value="In progress">
                 <option value="Completed">
               </datalist>
@@ -40,7 +44,7 @@
   <div class="mb-3">
     <button type="submit" class="btn btn-primary">Update</button>
   </div>
-
+</fieldset>
 </form>
 </p>
 {% endblock %}

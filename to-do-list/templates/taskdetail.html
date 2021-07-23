@@ -1,30 +1,33 @@
 {% extends "base.html" %}
 {% block body %}
-<h1 class="display-1">Task details</h1>
+<h1 class="display-3">TASK DETAILS</h1>
 
 <p>
   <h6 class="display-6">
     {{task}}
   </h6>
 </p>
+{%if status=="Completed" %}
 <p>
-    created on:<u class="name">{{created_on}}</u>
   
+  <button type="button" class="btn btn-success">Completed</button>
 </p>
-
+{% else %}
 <p>
-    Due:<u class="name">{{due}}</u>
   
+    <button type="button" class="btn btn-danger">  Due:{{due}}</button>
 </p>
-
+{% endif %}
 
 
   <p class="description"> 
     {{description}}
   </p>
 
-<p>
+<div class="mb-3"><p>
   <a class="btn btn-primary" href="{{url_for('main.edit', pid=id)}}">Edit</a>
-</p>
+  <a type="submit" class="btn btn-primary" href="{{url_for('main.delete', pid=id)}}" >Delete</a>
+  </p>
+</div>
 
 {% endblock %}

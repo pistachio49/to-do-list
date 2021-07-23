@@ -5,7 +5,7 @@
             <table class="table table-striped">
               <thead class="thead-dark">
               <tr>
-                <th scope="col"> <a href="/?order_by=id&order={{order}}">S.No</a> </th>
+                <!--th scope="col"> <a href="/?order_by=id&order={{order}}"-->
                 <th scope="col"> <a href="/?order_by=task&order={{order}}">Task</a>  </th>
                 <th scope="col"> <a href="/?order_by=created_on&order={{order}}">Created On</a>  </th>
                 <th scope="col"> <a href="/?order_by=due&order={{order}}">Due</a> </th>
@@ -14,12 +14,29 @@
               </thead>
               {% for id, task, created_on, due, status in pets %}
               <tr>              
-                <td scope="row" class="petid" ><a href="{{url_for('main.task_info', pid=id)}}">{{id}}</a></td>
+                
                 <td class="petname"><a href="{{url_for('main.task_info', pid=id)}}">{{task}} </a></td>
                 <td class="petbought">{{created_on}}</td>
                 <td class="petsold">{{due}}</td>
-                <td class="petsold">{{status}}</td>
-                <td class="petsold"><a class="btn btn-primary" href="{{url_for('main.edit',pid=id)}}">Delete</a></td>
+                <td class="petsold">
+                  {%if status=="Completed" %}
+                  <p>
+                    
+                   <a href="{{url_for('main.changetask', pid=id)}}"> <button type="button" style="width:7em" class="btn btn-success" >Completed</button></a>
+                  </p>
+                  {% elif status=="To-do" %}
+                  <p>
+                    
+                    <a href="{{url_for('main.changetask', pid=id)}}">  <button type="button" style="width:7em" class="btn btn-danger"> To-do</button></a>
+                  </p>
+                  {% else %}
+                  
+                  <p>
+                    <a href="{{url_for('main.changetask', pid=id)}}"> <button type="button" style="width:7em" class="btn btn-warning">In Progress</button></a>
+                  </p>
+                  {% endif %}
+                </td>
+                
               </tr>
               {%endfor%}
             </table>

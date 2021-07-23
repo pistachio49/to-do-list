@@ -25,25 +25,73 @@ def mainpage():
         cursor.execute(f"select p.id, p.task, p.created_on, p.due, p.status from content p order by p.{oby}")
     else:
         cursor.execute(f"select p.id, p.task, p.created_on, p.due, p.status from content p order by p.{oby} desc")
+
     dat = cursor.fetchall()
     return render_template('index.html', pets = dat, order="desc" if order=="asc" else "asc")
 
-@bp.route("/<pid>")
+
+@bp.route("/<pid>/changetask")
+def changetask(pid):
+    conn = db.get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("select p.status from content p where p.id=?", (pid))
+    d=cursor.fetchone()
+
+    status=d
+    if status[0]=="To-do":
+        cursor.execute("update content set status=? where id=?",("In progress",pid))
+        print("yes")
+    elif status[0]=='In progress':
+        cursor.execute("update content set status=? where id=?",("Completed",pid))
+        print("yes22")
+    else:
+        cursor.execute("update content set status=? where id=?",("To-do",pid))
+        print(status)
+    
+    conn.commit()
+
+    return redirect(url_for("main.mainpage", pid=pid), 302)
+
+
+@bp.route("/<pid>", methods=["GET", "POST"])
 def task_info(pid): 
     conn = db.get_db()
     cursor = conn.cursor()
-    cursor.execute("select p.task, p.created_on, p.due,p.description from content p where p.id=?", [pid])
-    pet = cursor.fetchone()
-    #cursor.execute("select t.name from tags_pets tp, tag t where tp.pet = ? and tp.tag = t.id", [pid])
-    
-    task, created_on, due, description= pet
-    data = dict(id = pid,
-                task=task,
-                created_on=created_on,
-                due=due,
-                description=description
-                )
-    return render_template("taskdetail.html", **data)
+
+    if request.method== "GET":
+        cursor.execute("select p.task, p.created_on, p.due,p.description,p.status from content p where p.id=?", [pid])
+        pet = cursor.fetchone()
+        #cursor.execute("select t.name from tags_pets tp, tag t where tp.pet = ? and tp.tag = t.id", [pid])
+        
+        task, created_on, due, description, status= pet
+        data = dict(id = pid,
+                    task=task,
+                    created_on=created_on,
+                    due=due,
+                    description=description,
+                    status=status
+                    )
+        return render_template("taskdetail.html", **data)
+    elif request.method== "POST":
+        cursor.execute("delete from content where id=?", (pid))
+        #conn.commit()
+
+        #if sold=="sold":
+       # cursor.execute("update pet set sold = ? where id = ?", (datetime.datetime.today().strftime("%Y-%m-%d"), pid))
+        conn.commit()
+        # TODO Handle sold
+        return redirect(url_for("main.mainpage", pid=pid), 302)
+
+@bp.route("/<pid>/delete")
+def delete(pid):
+    conn = db.get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("delete from content where id=?", (pid))
+    conn.commit()
+
+    return redirect(url_for("main.mainpage", pid=pid), 302)
 
 @bp.route("/addtask", methods=["GET", "POST"])
 def addtask():
@@ -63,6 +111,8 @@ def addtask():
         task = request.form.get("task")
         description = request.form.get("description")
         due = request.form.get("due")
+        #print(type(due))
+        due=due.replace("T"," ")
         status=request.form.get("status")
 
         if not task or not due or not status:
@@ -98,7 +148,9 @@ def edit(pid):
         task = request.form.get("task")
         description = request.form.get("description")
         due = request.form.get("due")
+        due=due.replace("T"," ")
         status=request.form.get("status")
+
 
         if not task or not due or not status:
             return redirect(url_for("main.mainpage"), 302)
