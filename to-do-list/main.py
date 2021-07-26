@@ -17,6 +17,7 @@ def format_date(d):
 
 @bp.route("/")
 def mainpage():
+    i=1
     conn = db.get_db()
     cursor = conn.cursor()
     oby = request.args.get("order_by", "id") # TODO. This is currently not used. 
@@ -27,6 +28,23 @@ def mainpage():
         cursor.execute(f"select p.id, p.task, p.created_on, p.due, p.status from content p order by p.{oby} desc")
 
     dat = cursor.fetchall()
+    ldat=list(dat)
+    topass=[]
+    #print(ldat)
+    for item in ldat:
+        litem=list(item)
+        litem.append(i)
+        topass.append(litem)
+        i+=1
+        #print(item)
+    
+    p=[]
+    for item in topass:
+        it=tuple(item)
+        p.append(it)
+
+    dat=tuple(p)
+    #print(dat)
     return render_template('index.html', pets = dat, order="desc" if order=="asc" else "asc")
 
 
